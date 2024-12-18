@@ -1,0 +1,17 @@
+{
+  "name": "testing_w_node_organizado",
+  "version": "1.0.0",
+  "description": "iNSTRUCTIVO DE INSTALACI�N",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^5.3.0",
+    "dotenv": "^16.4.7",
+    "puppeteer": "^23.10.4"
+  }
+}
