@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selector de Scripts</title>
+</head>
+<body>
+    <h1>Selecciona un Script para Ejecutar</h1>
+    <form id="scriptForm">
+        <label for="scriptSelect">Scripts disponibles:</label>
+        <select id="scriptSelect">
+            <% scripts.forEach(script => { %>
+                <option value="<%= script %>"><%= script %></option>
+            <% }); %>
+        </select>
+        <button type="submit">Ejecutar</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('scriptForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const scriptName = document.getElementById('scriptSelect').value;
+            console.log('Enviando script:', scriptName);
+            // Enviar el script seleccionado al servidor
+            const response = await fetch('/run-script', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ scriptName })
+            });
+
+            console.log('Respuesta del servidor:', response);
+
+            const result = await response.text();
+            document.getElementById('result').textContent = result;
+        });
+    </script>
+</body>
+</html>
