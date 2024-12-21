@@ -1,4 +1,3 @@
-const puppeteer = require('puppeteer');
 require('dotenv').config();
 
 const initializeBrowser = require('./browser');
@@ -11,7 +10,7 @@ const testFormSubmission = require('./scripts/testForm');
         await login(page);
         await testFormSubmission(page);
     } catch (error) {
-        console.error('Error durante el testing:', error);
+        console.error('\033[32m-Error durante el testing:-\033[0m', error);
     } finally {
         await browser.close();
     }

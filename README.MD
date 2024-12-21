@@ -15,6 +15,7 @@ Instrucciones se instalación
 * npm init -y
 * npm install puppeteer
 * npm install dotenv
+* npm install express
 * crear carpetas separando las de librerías de las principales
 
 Funcionamiento:
