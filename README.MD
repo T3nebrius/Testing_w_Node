@@ -16,6 +16,8 @@ Instrucciones se instalación
 * npm install puppeteer
 * npm install dotenv
 * npm install express
+* npm install ejs  
+* npm install socket.io 
 * crear carpetas separando las de librerías de las principales
 
 Funcionamiento:

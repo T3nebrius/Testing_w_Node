@@ -1,39 +1,70 @@
 require('dotenv').config();
-const fs = require('fs');
+const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const { Server } = require('socket.io');
 const initializeBrowser = require('./browser');
-const login = require('./scripts/login');
 
-// Función para cargar los scripts dinámicamente
-const loadScripts = (scriptsToRun) => {
-    return scriptsToRun.map(scriptName => {
-        const scriptPath = path.join(__dirname, 'scripts', `${scriptName}.js`);
-        if (fs.existsSync(scriptPath)) {
-            return require(scriptPath);
-        } else {
-            console.warn(`Script no encontrado: ${scriptName}`);
-            return null;
-        }
-    }).filter(script => script !== null);
-};
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Puedes pasar los nombres de los scripts que deseas ejecutar (sin el '.js')
-const scriptsToRun = ['testForm', 'testForm2', 'otroScript']; // Ejemplo de scripts a ejecutar (agrega más scripts aquí según sea necesario)
+// Configurar vistas
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
-(async () => {
-    const { browser, page } = await initializeBrowser(false); // Cambia a true para headless
+// Middleware para servir archivos estï¿½ticos
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Ruta principal para la interfaz
+app.get('/', (req, res) => {
+    // Leer los scripts disponibles en la carpeta "/scripts"
+    const scripts = fs.readdirSync(path.join(__dirname, 'scripts')).map(file => file.replace('.js', ''));
+    res.render('index', { scripts });
+});
+
+// Endpoint para ejecutar los scripts seleccionados
+app.post('/run', async (req, res) => {
+    const { selectedScripts, params } = req.body; // Scripts seleccionados y parï¿½metros personalizados
+
+    const logs = [];
+    const io = req.app.get('io'); // Accede a Socket.IO
+
     try {
-        // Ejecutar el login primero
+        const { browser, page } = await initializeBrowser(params.headless === 'true');
+        // Ejecutar login primero
+        const login = require(`./scripts/login`);
         await login(page);
+        logs.push('Login ejecutado correctamente.');
+        io.emit('log', 'Login ejecutado correctamente.');
 
-        // Cargar y ejecutar los otros scripts dinámicamente
-        const scripts = loadScripts(scriptsToRun);
-        for (const script of scripts) {
-            await script(page); // Ejecutar cada script pasando la página como parámetro
+        // Ejecutar los scripts seleccionados
+        for (const scriptName of selectedScripts) {
+            const script = require(`./scripts/${scriptName}`);
+            logs.push(`Ejecutando script: ${scriptName}...`);
+            io.emit('log', `Ejecutando script: ${scriptName}...`);
+            await script(page);
         }
+
+        res.json({ success: true, logs });
     } catch (error) {
-        console.error('\033[32m-Error durante el testing:-\033[0m', error);
-    } finally {
-        await browser.close();
+        logs.push(`Error: ${error.message}`);
+        io.emit('log', `Error: ${error.message}`);
+        res.status(500).json({ success: false, logs });
     }
-})();
+});
+
+// Iniciar el servidor y configurar Socket.IO
+const server = app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
+const io = new Server(server);
+app.set('io', io);
+
+io.on('connection', (socket) => {
+    console.log('Cliente conectado');
+    socket.on('disconnect', () => {
+        console.log('Cliente desconectado');
+    });
+});
