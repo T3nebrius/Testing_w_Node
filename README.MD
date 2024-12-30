@@ -22,7 +22,8 @@ Instrucciones se instalación
 
 Funcionamiento:
 
-node test.js
+node index.js - para ejecución con interfaz gráfica
+node manual.js - para ejecución de un script de test particular
 
 Evolución:
 Se propone que este sistema de testeo pueda recibir parámetros externos

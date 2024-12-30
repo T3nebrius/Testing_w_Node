@@ -1,8 +1,8 @@
 module.exports = async function testFormSubmission(page) {
     await page.goto('http://localhost:8082/gci/gi/clientes/vendedor.php');
     
-    await page.type('input[name="rut_nat"]', '13981995');
-    await page.type('input[name="dvrut_nat"]', '0');
+    await page.type('input[name="rut_nat"]', '11255705');
+    await page.type('input[name="dvrut_nat"]', '9');
     await page.type('input[name="nombre_nat"]', 'Ruben');
     await page.click('#btn_form_natural');
     

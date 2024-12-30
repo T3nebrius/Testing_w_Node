@@ -11,7 +11,7 @@ module.exports = async function login(page) {
 
     // Espera a que la página de inicio se cargue
     await page.waitForNavigation();
-    console.log('\033[32;5m-LOGIN-\033[32m');
+    console.log('\033[32;5m- LOGIN -\033[32m');
 
 }
 
