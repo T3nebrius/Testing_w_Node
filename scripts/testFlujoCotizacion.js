@@ -48,7 +48,7 @@ module.exports = async function testFormSubmission(page) {
         console.log("Resultado obtenido:", JSON.stringify(gridContent, null, 2));
     }
 
-    /* CLICK EN FICHA DE CLIENTE */
+    /* CLICK EN BOTON FICHA DE CLIENTE */
     console.log("- ABRIENDO FICHA CLIENTE...-");
     await page.waitForSelector('a.btn.btn-xs.btn-default[title="Ficha Cliente"]');
     await page.click('a.btn.btn-xs.btn-default[title="Ficha Cliente"]');
